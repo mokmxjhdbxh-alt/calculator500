@@ -2,356 +2,229 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>حاسبة الـ 500 الاحترافية</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>حاسبة الـ 500 الاحترافية V8</title>
     <style>
         :root {
-            /* الألوان الافتراضية (الوضع الداكن) */
-            --primary-blue: #81D4FA;
-            --accent-yellow: #FFC107;
-            --danger-red: #FF5252;
-            --success-green: #4CAF50;
-            --bg-dark: #121212;
-            --card-bg: #1E1E1E;
-            --text-color: #E0E0E0;
-            --table-header: #252525;
-            --input-bg: #2D2D2D;
-            --border-color: #444;
-        }
-
-        /* تنسيقات الوضع الفاتح */
-        body.light-mode {
-            --bg-dark: #F5F5F5;
-            --card-bg: #FFFFFF;
-            --text-color: #333333;
-            --table-header: #EEEEEE;
-            --input-bg: #FFFFFF;
-            --border-color: #DDD;
-            --primary-blue: #0288D1;
+            --bg-body: #121212; --bg-card: #1E1E1E; --text-main: #E0E0E0;
+            --primary-blue: #81D4FA; --accent-yellow: #FFC107; --danger-red: #FF5252;
+            --success-green: #4CAF50; --border: #444; --input-bg: #2D2D2D;
+            --warning-orange: #FF9800;
         }
 
         body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: var(--bg-dark); 
-            color: var(--text-color); 
-            text-align: center; 
-            margin: 0; padding: 10px; 
-            user-select: none;
-            transition: background 0.3s, color 0.3s;
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            background-color: var(--bg-body); color: var(--text-main); 
+            text-align: center; margin: 0; padding: 10px; transition: 0.4s;
+            user-select: none; overflow-x: hidden; padding-bottom: 300px; /* مساحة للوحة الأرقام */
         }
 
-        .header-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 500px;
-            margin: 0 auto 10px auto;
-        }
-
-        .theme-toggle {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            padding: 8px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.9em;
-        }
-
-        h1 { color: var(--primary-blue); margin: 0; font-size: 1.5rem; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; max-width: 500px; margin: 0 auto 10px; }
         
-        .round-info { 
-            display: flex; 
-            justify-content: center; 
-            gap: 20px; 
-            margin-bottom: 15px;
-            font-weight: bold;
-        }
-
-        .players-container { 
-            display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 15px; 
-            max-width: 500px;
-            margin: 0 auto 20px auto;
-        }
-        
+        /* كروت اللاعبين */
+        .players-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; max-width: 500px; margin: 0 auto; }
         .player-card { 
-            background-color: var(--card-bg); 
-            padding: 15px; 
-            border-radius: 15px; 
-            border: 2px solid var(--border-color);
-            transition: all 0.3s ease;
-            position: relative;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background: var(--bg-card); padding: 12px; border-radius: 15px; 
+            border: 2px solid var(--border); position: relative; transition: 0.3s;
         }
-
-        .is-dealer { 
-            border-color: var(--danger-red); 
-            box-shadow: 0 0 15px rgba(255, 82, 82, 0.3);
-            background-color: rgba(255, 82, 82, 0.05);
-        }
-
-        .dealer-arrow {
-            display: none;
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 1.5em;
-            color: var(--danger-red);
-        }
-        .is-dealer .dealer-arrow { display: block; }
-
-        .total-score { 
-            font-size: 2.5em; 
-            color: var(--accent-yellow); 
-            font-weight: bold; 
-            margin: 5px 0;
-        }
-
-        input[type="text"].name-input { 
-            width: 80%; border: none; border-bottom: 2px solid var(--border-color);
-            background: transparent; color: var(--primary-blue);
-            text-align: center; font-size: 1.1em; font-weight: bold;
-        }
-
-        input[type="text"].score-input { 
-            width: 85%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); 
-            text-align: center; font-size: 1.2em; background-color: var(--input-bg); color: var(--text-color); 
-        }
-
-        .btn { 
-            background-color: var(--success-green); color: white; padding: 15px; 
-            border: none; border-radius: 10px; font-size: 1.2em; cursor: pointer; 
-            width: 100%; max-width: 500px; margin-bottom: 10px; font-weight: bold;
-            box-shadow: 0 4px 0 #388E3C;
-        }
-        .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #388E3C; }
         
-        .secondary-btns { display: flex; gap: 10px; max-width: 500px; margin: 0 auto 20px auto; }
-        .btn-edit { background-color: #1565C0; flex: 1; padding: 10px; font-size: 0.9em; box-shadow: 0 4px 0 #0D47A1; }
-        .btn-reset { background-color: var(--danger-red); flex: 1; padding: 10px; font-size: 0.9em; box-shadow: 0 4px 0 #C62828; }
+        /* التنبيه اللوني */
+        .status-safe { border-color: var(--success-green); }
+        .status-warning { border-color: var(--warning-orange); box-shadow: 0 0 10px rgba(255, 152, 0, 0.3); }
+        .status-danger { border-color: var(--danger-red); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0px var(--danger-red); } 50% { box-shadow: 0 0 15px var(--danger-red); } 100% { box-shadow: 0 0 0px var(--danger-red); } }
 
-        /* تعديلات الجدول الجديدة */
-        #history-log { 
-            max-width: 500px; margin: 20px auto; 
-            background-color: var(--card-bg); 
-            border-radius: 12px; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            overflow: hidden; 
-        }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px 8px; border-bottom: 1px solid var(--border-color); font-size: 0.9em; }
-        th { background-color: var(--table-header); color: var(--primary-blue); font-weight: 800; }
-        .inc-score { display: block; color: var(--success-green); font-size: 0.75em; font-weight: bold; }
+        .is-dealer::after { content: "🃏 الموزع"; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--danger-red); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; }
 
-        #winner-msg { 
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 1000; flex-direction: column; 
-            justify-content: center; align-items: center; 
+        .total-score { font-size: 2.5em; color: var(--accent-yellow); font-weight: bold; margin: 5px 0; }
+        
+        /* حقول الإدخال مع المسح السريع */
+        .input-wrapper { position: relative; display: flex; align-items: center; justify-content: center; margin-top: 5px; }
+        .name-input { background: transparent; border: none; border-bottom: 1px solid var(--border); color: var(--primary-blue); text-align: center; font-weight: bold; width: 70%; font-size: 1rem; }
+        .score-display { width: 80%; padding: 8px; border-radius: 8px; background: var(--input-bg); color: var(--text-main); font-size: 1.3rem; min-height: 35px; border: 1px solid var(--border); }
+        .clear-btn { background: #555; color: white; border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; font-size: 12px; margin-left: 5px; }
+
+        /* لوحة الأرقام المخصصة */
+        .numpad { 
+            position: fixed; bottom: 0; left: 0; width: 100%; 
+            background: #252525; padding: 10px 0; display: grid; 
+            grid-template-columns: repeat(4, 1fr); gap: 5px; 
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.5); z-index: 1000;
         }
+        .num-btn { 
+            background: #333; color: white; border: none; padding: 15px 0; 
+            font-size: 1.5rem; font-weight: bold; border-radius: 5px; cursor: pointer;
+        }
+        .num-btn:active { background: #555; }
+        .action-btn { background: var(--success-green); color: white; }
+        .delete-btn { background: var(--danger-red); }
+
+        /* الجدول */
+        #history-log { max-width: 500px; margin: 20px auto; background: var(--bg-card); border-radius: 12px; overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        td { padding: 10px; border-bottom: 1px solid var(--border); }
+        .inc-score { color: var(--success-green); font-size: 0.7em; display: block; }
+
+        .active-input { border: 2px solid var(--primary-blue) !important; }
+        #winner-msg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; }
     </style>
 </head>
-<body class="">
+<body onload="initApp()">
 
-    <div class="header-controls">
-        <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙 وضع الليل</button>
-        <h1>حاسبة الـ 500 ♠️</h1>
-    </div>
-
-    <div class="round-info">
-        <div id="round-counter">الجولة: 1</div>
-        <div style="color:var(--danger-red)" id="dealer-name-display">الموزع: اللاعب 1</div>
+    <div class="header-top">
+        <h2 style="color: var(--primary-blue); margin: 0;">حاسبة الـ 500 🏆</h2>
+        <div id="round-counter" style="font-weight: bold;">الجولة: 1</div>
     </div>
 
     <div class="players-container">
-        <div class="player-card is-dealer" id="card1">
-            <span class="dealer-arrow">⬇️</span>
-            <input type="text" class="name-input" id="name1" value="اللاعب 1" onchange="saveData()">
-            <div class="total-score" id="score1">0</div>
-            <input type="text" class="score-input" id="input1" placeholder="سجل" inputmode="numeric" onkeypress="handleKey(event, 2)">
-        </div>
-        <div class="player-card" id="card2">
-            <span class="dealer-arrow">⬇️</span>
-            <input type="text" class="name-input" id="name2" value="اللاعب 2" onchange="saveData()">
-            <div class="total-score" id="score2">0</div>
-            <input type="text" class="score-input" id="input2" placeholder="سجل" inputmode="numeric" onkeypress="handleKey(event, 3)">
-        </div>
-        <div class="player-card" id="card3">
-            <span class="dealer-arrow">⬇️</span>
-            <input type="text" class="name-input" id="name3" value="اللاعب 3" onchange="saveData()">
-            <div class="total-score" id="score3">0</div>
-            <input type="text" class="score-input" id="input3" placeholder="سجل" inputmode="numeric" onkeypress="handleKey(event, 4)">
-        </div>
-        <div class="player-card" id="card4">
-            <span class="dealer-arrow">⬇️</span>
-            <input type="text" class="name-input" id="name4" value="اللاعب 4" onchange="saveData()">
-            <div class="total-score" id="score4">0</div>
-            <input type="text" class="score-input" id="input4" placeholder="سجل" inputmode="numeric" onkeypress="handleKey(event, 'finish')">
-        </div>
+        <script>
+            for(let i=0; i<4; i++) {
+                document.write(`
+                    <div class="player-card" id="card${i}" onclick="setActive(${i})">
+                        <div class="input-wrapper">
+                            <input type="text" class="name-input" id="name${i}" value="لاعب ${i+1}" onchange="saveNames()">
+                            <button class="clear-btn" onclick="clearName(${i})">✕</button>
+                        </div>
+                        <div class="total-score" id="score${i}">0</div>
+                        <div class="input-wrapper">
+                            <div class="score-display" id="input${i}"></div>
+                            <button class="clear-btn" onclick="clearInput(${i})">✕</button>
+                        </div>
+                    </div>
+                `);
+            }
+        </script>
     </div>
 
-    <button class="btn" onclick="addScores()">تسجيل النشرة</button>
-    <div class="secondary-btns">
-        <button class="btn btn-edit" onclick="undo()">↩️ تراجع</button>
-        <button class="btn btn-reset" onclick="confirmReset()">🗑️ تصفير</button>
-    </div>
+    <button class="btn" onclick="addScores()" style="background:var(--success-green); color:white; padding:15px; border:none; border-radius:10px; width:95%; max-width:500px; margin-top:15px; font-weight:bold; font-size:1.2rem;">تسجيل النشرة 📢</button>
     
+    <div style="display: flex; gap: 10px; max-width: 500px; margin: 10px auto; width: 95%;">
+        <button onclick="undo()" style="flex:1; padding:10px; border-radius:8px; background:#1565C0; color:white; border:none;">↩️ تراجع</button>
+        <button onclick="moveDealer()" style="flex:1; padding:10px; border-radius:8px; background:#6a1b9a; color:white; border:none;">🎯 الموزع</button>
+        <button onclick="confirmReset()" style="flex:1; padding:10px; border-radius:8px; background:var(--danger-red); color:white; border:none;">🗑️ تصفير</button>
+    </div>
+
     <div id="history-log">
-        <table>
-            <thead>
-                <tr>
-                    <th>ج</th>
-                    <th id="h-n1">1</th><th id="h-n2">2</th><th id="h-n3">3</th><th id="h-n4">4</th>
-                </tr>
-            </thead>
-            <tbody id="history-body"></tbody>
-        </table>
+        <table><tbody id="history-body"></tbody></table>
+    </div>
+
+    <div class="numpad">
+        <button class="num-btn" onclick="pressNum('1')">1</button>
+        <button class="num-btn" onclick="pressNum('2')">2</button>
+        <button class="num-btn" onclick="pressNum('3')">3</button>
+        <button class="num-btn delete-btn" onclick="pressNum('del')">⌫</button>
+        <button class="num-btn" onclick="pressNum('4')">4</button>
+        <button class="num-btn" onclick="pressNum('5')">5</button>
+        <button class="num-btn" onclick="pressNum('6')">6</button>
+        <button class="num-btn action-btn" onclick="setActive((activeIndex+1)%4)">التالي</button>
+        <button class="num-btn" onclick="pressNum('7')">7</button>
+        <button class="num-btn" onclick="pressNum('8')">8</button>
+        <button class="num-btn" onclick="pressNum('9')">9</button>
+        <button class="num-btn action-btn" style="background:#555" onclick="addScores()">قيد</button>
+        <button class="num-btn" onclick="pressNum('0')" style="grid-column: span 2;">0</button>
+        <button class="num-btn" onclick="pressNum('-')" style="background:#444">-</button>
+        <button class="num-btn" onclick="toggleMenu()" style="background:#444">⚙️</button>
     </div>
 
     <div id="winner-msg">
-        <h2 style="color:white">انتهت اللعبة!</h2>
-        <div id="winner-text" style="font-size: 2em; color:var(--danger-red); margin: 20px; font-weight: bold;"></div>
-        <button class="btn" style="width:200px" onclick="confirmReset()">لعبة جديدة</button>
+        <h1 style="color:white">هاردلك يالامير!</h1>
+        <div id="winner-text" style="font-size: 2.5rem; color:var(--danger-red); margin: 20px; font-weight:bold;"></div>
+        <button onclick="location.reload()" style="padding:15px 40px; border-radius:10px; background:var(--success-green); color:white; border:none; font-size:1.2rem;">لعبة جديدة</button>
     </div>
 
     <script>
-        let totals = [0, 0, 0, 0];
-        let history = [];
-        let currentRound = 1;
-        let dealerIndex = 0;
+        let totals = [0,0,0,0], history = [], currentRound = 1, dealerIndex = 0, activeIndex = 0;
 
-        // وظيفة الحفظ التلقائي
-        function saveData() {
-            const gameData = {
-                totals, history, currentRound, dealerIndex,
-                names: [
-                    document.getElementById('name1').value,
-                    document.getElementById('name2').value,
-                    document.getElementById('name3').value,
-                    document.getElementById('name4').value
-                ],
-                theme: document.body.classList.contains('light-mode') ? 'light' : 'dark'
-            };
-            localStorage.setItem('game500_data', JSON.stringify(gameData));
-            updateUI();
+        function fixNumbers(str) {
+            const p = [/٠/g, /١/g, /٢/g, /٣/g, /٤/g, /٥/g, /٦/g, /٧/g, /٨/g, /٩/g];
+            for (let i=0; i<10; i++) str = str.toString().replace(p[i], i);
+            return str;
         }
 
-        // استعادة البيانات عند التحميل
-        function loadData() {
-            const saved = localStorage.getItem('game500_data');
-            if (saved) {
-                const data = JSON.parse(saved);
-                totals = data.totals;
-                history = data.history;
-                currentRound = data.currentRound;
-                dealerIndex = data.dealerIndex;
-                data.names.forEach((n, i) => document.getElementById('name' + (i+1)).value = n);
-                if (data.theme === 'light') toggleTheme(true);
-            }
-            updateUI();
-        }
-
-        function toggleTheme(forceLight = false) {
-            if (forceLight) {
-                document.body.classList.add('light-mode');
+        function pressNum(val) {
+            let display = document.getElementById('input' + activeIndex);
+            if (val === 'del') {
+                display.innerText = display.innerText.slice(0, -1);
             } else {
-                document.body.classList.toggle('light-mode');
-            }
-            const isLight = document.body.classList.contains('light-mode');
-            document.getElementById('theme-btn').innerText = isLight ? '☀️ وضع النهار' : '🌙 وضع الليل';
-            saveData();
-        }
-
-        function parseInput(str) {
-            const ar = [/٠/g, /١/g, /٢/g, /٣/g, /٤/g, /٥/g, /٦/g, /٧/g, /٨/g, /٩/g];
-            let cleanStr = str.toString();
-            for(let i=0; i<10; i++) cleanStr = cleanStr.replace(ar[i], i);
-            return parseInt(cleanStr) || 0;
-        }
-
-        function handleKey(e, target) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                if (target === 'finish') addScores();
-                else document.getElementById('input' + target).focus();
+                display.innerText = fixNumbers(display.innerText + val);
             }
         }
+
+        function setActive(idx) {
+            activeIndex = idx;
+            for(let i=0; i<4; i++) document.getElementById('input'+i).classList.remove('active-input');
+            document.getElementById('input'+idx).classList.add('active-input');
+        }
+
+        function clearInput(idx) { document.getElementById('input'+idx).innerText = ''; event.stopPropagation(); }
+        function clearName(idx) { document.getElementById('name'+idx).value = ''; event.stopPropagation(); }
 
         function addScores() {
-            let roundScores = [];
-            let anyData = false;
-            for (let i = 1; i <= 4; i++) {
-                let val = parseInput(document.getElementById('input' + i).value);
-                roundScores.push(val);
-                if (val !== 0) anyData = true;
-                document.getElementById('input' + i).value = '';
-            }
-            if (!anyData) return;
+            let roundScores = [0,1,2,3].map(i => parseInt(document.getElementById('input'+i).innerText) || 0);
+            if (roundScores.every(s => s === 0)) return;
 
-            history.unshift({ round: currentRound, scores: [...roundScores], totals: [...totals], dealer: dealerIndex });
-            for (let i = 0; i < 4; i++) totals[i] += roundScores[i];
+            history.unshift({ round: currentRound, scores: [...roundScores], totals: [...totals] });
+            roundScores.forEach((s, i) => totals[i] += s);
             
             dealerIndex = (dealerIndex + 1) % 4;
             currentRound++;
-            saveData();
+            updateUI();
             checkWinner();
-            document.getElementById('input1').focus();
+            [0,1,2,3].forEach(i => document.getElementById('input'+i).innerText = '');
+            setActive(0);
         }
 
         function updateUI() {
             document.getElementById('round-counter').innerText = `الجولة: ${currentRound}`;
             totals.forEach((s, i) => {
-                document.getElementById('score' + (i + 1)).innerText = s;
-                const card = document.getElementById('card' + (i + 1));
-                i === dealerIndex ? card.classList.add('is-dealer') : card.classList.remove('is-dealer');
-                document.getElementById('h-n' + (i + 1)).innerText = document.getElementById('name' + (i+1)).value;
-            });
+                document.getElementById('score'+i).innerText = s;
+                const card = document.getElementById('card'+i);
+                
+                // التنبيه اللوني
+                card.className = 'player-card'; // Reset
+                if (s >= 450) card.classList.add('status-danger');
+                else if (s >= 350) card.classList.add('status-warning');
+                else card.classList.add('status-safe');
 
-            const currentDealerName = document.getElementById('name' + (dealerIndex + 1)).value;
-            document.getElementById('dealer-name-display').innerText = `الموزع: ${currentDealerName}`;
+                if (i === dealerIndex) card.classList.add('is-dealer');
+            });
 
             const body = document.getElementById('history-body');
             body.innerHTML = history.map(h => `
                 <tr>
-                    <td style="background:var(--table-header); font-weight:bold">${h.round}</td>
-                    ${h.totals.map((t, i) => {
-                        const totalAfter = t + h.scores[i];
-                        return `<td>${totalAfter}<span class="inc-score">+${h.scores[i]}</span></td>`
-                    }).join('')}
+                    <td style="font-weight:bold; color:var(--primary-blue)">ج${h.round}</td>
+                    ${h.totals.map((t, i) => `<td>${t + h.scores[i]}<span class="inc-score">${h.scores[i] >=0 ? '+' : ''}${h.scores[i]}</span></td>`).join('')}
                 </tr>
             `).join('');
         }
 
         function checkWinner() {
-            let losers = [];
-            totals.forEach((s, i) => {
-                if (s >= 500) losers.push(document.getElementById('name' + (i+1)).value);
-            });
+            let losers = totals.map((s, i) => s >= 500 ? document.getElementById('name'+i).value : null).filter(n => n);
             if (losers.length > 0) {
                 document.getElementById('winner-msg').style.display = 'flex';
-                document.getElementById('winner-text').innerHTML = "هاردلك يالامير:<br>" + losers.join('<br>');
+                document.getElementById('winner-text').innerText = losers.join(' و ');
             }
         }
 
+        function moveDealer() { dealerIndex = (dealerIndex + 1) % 4; updateUI(); }
         function undo() {
             if (history.length === 0) return;
-            const lastRound = history.shift();
-            totals = [...lastRound.totals];
-            dealerIndex = lastRound.dealer;
+            const last = history.shift();
+            totals = [...last.totals];
             currentRound--;
-            saveData();
+            dealerIndex = (dealerIndex - 1 + 4) % 4;
+            updateUI();
         }
-
-        function confirmReset() {
-            if (confirm("سيتم تصفير كل شيء، هل أنت متأكد؟")) {
-                localStorage.removeItem('game500_data');
-                location.reload();
-            }
+        function saveNames() {
+            const names = [0,1,2,3].map(i => document.getElementById('name'+i).value);
+            localStorage.setItem('names_500_v8', JSON.stringify(names));
         }
-
-        window.onload = loadData;
+        function loadNames() {
+            const names = JSON.parse(localStorage.getItem('names_500_v8'));
+            if (names) names.forEach((n, i) => document.getElementById('name'+i).value = n);
+        }
+        function confirmReset() { if(confirm("تصفير النقاط؟")) { totals = [0,0,0,0]; history = []; currentRound = 1; updateUI(); } }
+        function initApp() { loadNames(); updateUI(); setActive(0); }
     </script>
 </body>
 </html>
